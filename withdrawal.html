@@ -1,0 +1,94 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="formStyle.css">
+
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="registration-form">
+        <form id="withdrawalForm" method="POST" action="">
+            
+            <div class="form-group row">
+                <label for="userAccount" class="col-4 col-form-label">提款帳號：</label>
+                <div class="col-8">
+                    <input id="userAccount" name="userAccount" type="text" class="form-control item" value="" required="required" readonly="readonly">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">現有帳號金額(NTD)：</label>
+                <div class="col-8">
+                <input id="nowCapital" name="nowCapital" type="number" min="10" max="100000" class="form-control item" value="" required="required" readonly="readonly">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="depositNum" class="col-4 col-form-label">提款金額(NTD)：</label>
+                <div class="col-8">
+                    <input id="withdrawalNum" name="withdrawalNum" type="number" min="100" max="100000" class="form-control item" required="required">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="description" class="col-4 col-form-label">敘述：</label>
+                <div class="col-8">
+                    <textarea id="description" name="description" cols="20" rows="3" class="form-control item"></textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                提醒：每日提款上限為NTD1,000,000。
+            </div>
+            <div class="form-group row">
+                <div class="offset-4 col-8">
+                    <button name="okButton" type="submit" class="btn btn-primary" value="OK">新增</button>
+                    <button name="cancelButton" type="cancel" class="btn btn-danger" onclick="javascript:location.href='secret.html'">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+<script>
+    $.post('log.php', function (e) {
+        console.log(e);
+        session = $.parseJSON(e);
+        if (session.finduserId == null) {
+            // alert(session.finduserId);
+            window.location.href="index.html";
+        }
+        $('#userAccount').val(session.userAcc);
+        $('#nowCapital').val(session.capital);
+    });
+
+    $('#withdrawalForm').submit (function(a) {
+        a.preventDefault();
+        let params=$('#withdrawalForm').serialize();
+        // console.log(params);
+        $.ajax( {
+            url: "withdrawal.php",
+            type: "POST",
+            data: params,
+            success: function(e) {
+                if (e.err) {
+                     alert(e.err);
+                }
+                else {
+                    alert(e.suc)
+                    window.location.href='secret.html'; 
+                }
+                
+            },
+            error: function() {   
+                alert("失敗");    
+            }
+        });
+    })
+</script>
+</html>

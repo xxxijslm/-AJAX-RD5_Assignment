@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+        integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
+    <link rel="stylesheet" href="detail.css" type="text/css">
+    <title>Document</title>
+    
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">
+            <h3 ><a id="userName" href="secret.html"></a></h3>
+            <div class="row" id="cashdiv" name="cashdiv">
+                <div id="cash" name="cash"></div>
+            </div>
+            <!-- <h6 id="cash"><?="總資本額：NTD" .  $capital?></h6> -->
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-10 ml-auto mr-auto tables">
+                <div class="col-md-12">
+                    <h4>明細列表</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text">日期</th>
+                                <th class="text-right">存款(NTD)</th>
+                                <th class="text-right">提款(NTD)</th>
+                                <th class="text-right">敘述</th>
+                                <th class="text-right">餘額(NTD)</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="content">
+                                    <tr>
+                                        <td class="text"></td>
+                                        <td class="text-right"></td>
+                                        <td class="text-right"></td>
+                                        <td class="text-right"></td>
+                                        <td id="balance" name="balance" class="text-right"></td>
+                                    </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $.post('log.php', function (e) {
+        console.log(e);
+        session = $.parseJSON(e);
+        if (session.finduserId == null) {
+            // alert(session.finduserId);
+            window.location.href="index.html";
+        }
+        $('#userName').html(session.userName);
+        $('#cash').html('帳號:' + session.userAcc + ' 總資本額: NTD*****');
+
+        $('#cash').mouseover(function () {
+            $('#cash').html('帳號:' + session.userAcc + ' 總資本額: NTD' + session.capital);
+        })
+        $('#cash').mouseout(function () {
+            $('#cash').html('帳號:' + session.userAcc + ' 總資本額: NTD*****');
+        })
+    });
+
+    $.ajax( {
+        url: "detail.php",
+        type: "GET",
+        dataType: "html",
+        success: function (e) {
+          $('#content').html(e);  
+        },
+        error: function() {
+            alert("Error");
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <title>Bank</title>
+</head>
+
+<body>
+    <h2>登入/註冊帳號</h2>
+    <div id="message"></div>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form id="signUpForm" method="POST" action="#">
+                <h1>註冊帳號</h1>
+                <input type="text" id="userName" name ="userName" placeholder="真實姓名" value="" required/>
+                <input type="text" id="userAcc" name ="userAcc" placeholder="帳號(登入使用)" value="" required/>
+                <input type="password" id="password" name ="password" placeholder="密碼(請設定6-15位英數字含大小寫)" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,30}$" required/>
+                <input type="password" id="passwordAgain" name ="passwordAgain" placeholder="確認密碼" required/>
+                <button id="signUpButton" name="signUpButton">Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form id="signInForm" method="POST" action="#">
+                <h1>登入</h1>
+                <input type="text" id="loginUserAcc" name ="loginUserAcc" placeholder="帳號" required/>
+                <input type="password" id="loginPassword" name ="loginPassword" placeholder="密碼" required/>
+                <a id="secretPageIndex" style=" cursor: pointer; ">已經登入？進入個人網銀頁面</a>
+                <button id="signInButton" name="signInButton">Sign In</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+        
+        $('#signUpForm').submit( function (a) {
+            a.preventDefault();
+            //  console.log("OK");
+            let params=$('#signUpForm').serialize();
+            // console.log(params);
+            $.ajax( {
+                url: "signup.php",
+                type: "POST",
+                data: params,
+                success: function(e) {
+                    if (e.err) {
+                        getMessage(e.err);
+                    }
+                    else {
+                        alert(e.suc);
+                        window.location.href='index.php';
+                    }
+                },
+                error: function() {   
+                    alert("失敗");
+                }
+            })
+        })
+        $('#signInForm').submit( function (a) {
+            a.preventDefault();
+            let params=$('#signInForm').serialize();
+            $.ajax( {
+                url: "signin.php",
+                type: "POST",
+                data: params,
+                success: function(e) {
+                    if (e.finduserId != null) {
+                        // console.log (e.userAcc);
+                        window.location.href='secret.html';
+                    }
+                    else {
+                        getMessage(e.err);
+                    }
+                },
+                error: function() {   
+                    alert("失敗");    
+                }
+            });
+        })
+        
+        $.post('log.php', function (e) {
+                console.log(e);
+        });
+
+        $('#secretPageIndex').click (function () {
+            $.post('log.php', function (e) {
+                console.log(e);
+                session = $.parseJSON(e);
+                // alert (session.finduserId);
+                if (session.finduserId != null) {
+                    // alert(session.finduserId);
+                    window.location.href = "secret.html";
+                }
+                else {
+                    getMessage("請登入！！！")
+                }
+            })
+
+        })
+        
+
+        function getMessage(message) {
+            $('#message').html(message);
+        }
+    })
+    
+
+    
+</script>
+
+</html>
